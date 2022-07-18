@@ -6,6 +6,7 @@ vaapi_sources = [
   'gstvaapipluginbase.c',
   'gstvaapipluginutil.c',
   'gstvaapipostproc.c',
+  'gstvaapipostprocess.c',
   'gstvaapipostprocutil.c',
   'gstvaapisink.c',
   'gstvaapivideobuffer.c',

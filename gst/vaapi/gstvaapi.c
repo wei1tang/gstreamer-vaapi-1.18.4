@@ -26,6 +26,7 @@
 #include "gstvaapidecode.h"
 #include "gstvaapioverlay.h"
 #include "gstvaapipostproc.h"
+#include "gstvaapipostprocess.h"
 #include "gstvaapisink.h"
 #include "gstvaapidecodebin.h"
 
@@ -211,6 +212,9 @@ plugin_init (GstPlugin * plugin)
 
   gst_element_register (plugin, "vaapidecodebin",
       GST_RANK_PRIMARY + 2, GST_TYPE_VAAPI_DECODE_BIN);
+
+  gst_element_register (plugin, "vaapipostprocess",
+      GST_RANK_PRIMARY + 4, GST_TYPE_VAAPIPOSTPROCESS);
 
   rank = GST_RANK_SECONDARY;
   if (g_getenv ("WAYLAND_DISPLAY"))

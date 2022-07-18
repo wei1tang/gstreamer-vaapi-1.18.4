@@ -132,6 +132,47 @@ gst_vaapipostproc_transform_srccaps (GstVaapiPostproc * postproc)
   return out_caps;
 }
 
+/**
+ * gst_vaapipostprocess_transform_srccaps:
+ * @postprocess: a #GstVaapiPostprocess instance
+ *
+ * Early apply transformation of the src pad caps according to the set
+ * properties.
+ *
+ * Returns: A new allocated #GstCaps
+ **/
+GstCaps *
+gst_vaapipostprocess_transform_srccaps (GstVaapiPostprocess * postprocess)
+{
+  GstCaps *out_caps;
+  GstStructure *structure;
+  GstCapsFeatures *features;
+  gint i, n;
+
+  out_caps = gst_caps_new_empty ();
+  n = gst_caps_get_size (postprocess->allowed_srcpad_caps);
+
+  for (i = 0; i < n; i++) {
+    structure = gst_caps_get_structure (postprocess->allowed_srcpad_caps, i);
+    features = gst_caps_get_features (postprocess->allowed_srcpad_caps, i);
+
+    /* make copy */
+    structure = gst_structure_copy (structure);
+
+    if (postprocess->keep_aspect)
+      gst_structure_set (structure, "pixel-aspect-ratio", GST_TYPE_FRACTION, 1,
+          1, NULL);
+
+    _transform_format (postprocess, features, structure);
+    _transform_frame_size (postprocess, structure);
+
+    gst_caps_append_structure_full (out_caps, structure,
+        gst_caps_features_copy (features));
+  }
+
+  return out_caps;
+}
+
 gboolean
 is_deinterlace_enabled (GstVaapiPostproc * postproc, GstVideoInfo * vip)
 {
@@ -783,4 +824,26 @@ gst_vaapipostproc_fixate_srccaps (GstVaapiPostproc * postproc,
   if (!gst_video_info_from_caps (&vi, sinkcaps))
     return NULL;
   return _get_preferred_caps (postproc, &vi, srccaps);
+}
+
+/**
+ * gst_vaapipostprocess_fixate_srccaps:
+ * @postprocess: a #GstVaapiPostproc instance
+ * @sinkcaps: fixed #GstCaps from sink pad
+ * @srccaps: #GstCaps from src pad to fixate
+ *
+ * Given @srccaps and @sinkcaps returns a new allocated #GstCaps with
+ * the fixated caps for the src pad.
+ *
+ * Returns: A new allocated #GstCaps
+ **/
+GstCaps *
+gst_vaapipostprocess_fixate_srccaps (GstVaapiPostprocess * postprocess,
+    GstCaps * sinkcaps, GstCaps * srccaps)
+{
+  GstVideoInfo vi;
+
+  if (!gst_video_info_from_caps (&vi, sinkcaps))
+    return NULL;
+  return _get_preferred_caps (postprocess, &vi, srccaps);
 }

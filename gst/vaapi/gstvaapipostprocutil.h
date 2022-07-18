@@ -25,6 +25,7 @@
 #define GST_VAAPIPOSTPROCUTIL_H
 
 #include "gstvaapipostproc.h"
+#include "gstvaapipostprocess.h"
 
 G_BEGIN_DECLS
 
@@ -34,7 +35,12 @@ G_BEGIN_DECLS
 
 GstCaps *gst_vaapipostproc_transform_srccaps (GstVaapiPostproc * postproc);
 
+GstCaps *gst_vaapipostprocess_transform_srccaps (GstVaapiPostprocess * postprocess);
+
 GstCaps *gst_vaapipostproc_fixate_srccaps (GstVaapiPostproc * postproc,
+    GstCaps * sinkcaps, GstCaps * srccaps);
+
+GstCaps *gst_vaapipostprocess_fixate_srccaps (GstVaapiPostprocess * postprocess,
     GstCaps * sinkcaps, GstCaps * srccaps);
 
 gboolean is_deinterlace_enabled (GstVaapiPostproc * postproc,
